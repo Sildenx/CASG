@@ -1,0 +1,124 @@
+# CASG
+#Crear una lista secuencia 
+#Puede ser creada con seq o una simple lista 
+
+seq(0,15,.5)
+polizas<-(0:15)
+n<-15
+
+#dbinom : Probabilidad de que x=k 
+#pbinom : Probabilidad de que x<=k
+
+#Ejemlo DBINOM:
+#Estructura 
+#prob <-dbinom(nopolizas, n, prob = .25(Probabilidad de éxito))
+prob5 <- dbinom(5,n,prob = .25) #Probabilidad de que 5 pólizas se siniestren 
+
+probd<- dbinom(polizas, n, prob = .25)
+
+#La funcipon cbin permite agrupar objetos 
+
+#Estructura:cBIN:
+# informef <- cbind(polizas, probabilidad de exito)
+informef <- cbind(polizas, prob5)
+
+#Gráfico de probabilidades 
+plot(polizas, probd, type = "b", xlab = "Pílizas siniestradas", ylab = "probabilidad")
+#Cuando usamos el tipo b usa unas bolitas 
+#Podemos usar el tipo l para continuos 
+plot(polizas, probd, type = "l", xlab = "Pílizas siniestradas", ylab = "probabilidad")
+points(polizas,probd)
+
+#Cálculo de probabilidades menores o iguales P[x<=k]
+#Cumsum es para obtener probabilidades acumuladas 
+F<- cumsum(probd)
+F
+
+#Otra forma de cálculo 
+probp <- pbinom(polizas, n, prob = .25)
+
+#Gráficos de la distribución acumulada 
+#La probabilidad entre los puntos permanece cosntante 
+
+informe1 <- cbind(polizas, probp)
+informe1
+#Esta cartera está mal por que en cuatro siniestros llevamos el 68 por ciento 
+#Para graficar 
+
+plot(polizas, probp, type = "S")
+
+plot(polizas, probp, type = "b")
+points(polizas, probd, col="red")
+
+
+#Cálculo de la media y varianza 
+#E[x]=suma (xi*prob(xi))
+media1=sum(polizas*probd)
+
+#Empleando los resultados de la dbinom
+media2<- n*.25
+
+#Para el cálculo de la varianza 
+segundo<- sum((polizas^2)*probd)
+var<- segundo-media1^2
+
+#Cálculo de varianza con parámetros 
+var1 <- n*.25*(1-.25)
+#Otro calculo de la varianza 
+var2= sum(((polizas-media1)^2)*probd)
+
+
+#Para el cálculo de percentiles
+#Cálcule el valor que deja por debajo del 30%
+q30<- qbinom(.3, n, prob = .25)
+
+#Una lista de todos los percentiles 
+percentiles <- seq(.1, by=.05)
+#Cáluclar todos los percentiles de mi cartera 
+lpercent<- qbinom(percentiles, n, prob = .25)
+
+informe_p <- cbind(percentiles*100, lpercent)
+plot(informe_p, type = "b", xlab = "Percentiles", ylab = "Siniestros")
+
+#Análisis de los percentiles ¿Cómo se comporta la cartera?
+#Esta muy mal porque la media es de 3.75 y a los 4 llevo ya el 50% de probabilidad 
+
+#Cálcular sesgo y curtosis 
+#Cálcular el tercer momento 
+sesgo<- (1-2*.25)/(n*.25*(1-.25))^.5
+
+#EJERCICIOS 
+#¿cuál es la probabilidad de obtener 9 siniestros?
+#P[x=9]
+nueve<- dbinom(9, n, prob = .25)
+#Tener 5 o menos siniestros 
+#P[x<=5]
+cinco<- pbinom(5,n, prob = .25)
+#Probabilidad de tener mas de 7 siniestros 
+#P[x>7]
+siete <- pbinom(7, n, prob=.25)
+probmasdesiete=1-siete
+#Probabilidad de tener 8 o mas siniestros 
+ocho=1-pbinom(7, n, 0.25)
+#Probabilidad de tener al menos 4 y a lo mucho 11 siniestros 
+probentre4y11 <- pbinom(11,n, prob=.25)-pbinom(3,n,prob=.25)
+#Probabilidad entre 1 y 8 siniestros 
+entre1y8 <- pbinom(7,n,prob = .25)-pbinom(1,n,prob=.25)
+
+
+#EJERCICIO 
+#Se tiene una muetsra de 80 pólizas del ramo de gatos médicos 
+#La probabilidad de que una de ellas tenga siniestros es de.2%
+#Estudie la variable aleatoria suponiendo una distribucion binomial.
+#Lo anterior debido a que se seleccionará. 
+
+
+#similación valores con distribución binomial , enteros entre 0 y 80
+p<- .2
+n<- 80
+simulados_gm<- rbinom(10000, n, prob=p)
+min(simulados_gm)
+max(simulados_gm)
+hist(simulados_gm)
+media_gsmin<- mean(simulados_gm)
+varianza_gsmin <- var(simulados_gm)
